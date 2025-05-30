@@ -7,4 +7,3 @@ __<p align=center>Detecte for Htt Event</p>__
       <img src="./result/jet.png" alt="htt"/>
    </figure>
 </div>
-<p>
