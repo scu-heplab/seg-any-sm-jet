@@ -1,4 +1,4 @@
-# SegAny sm-Jet
+# Segment Any SM-Jet
 
 __<p align=center>Detecting Htt event</p>__
 
