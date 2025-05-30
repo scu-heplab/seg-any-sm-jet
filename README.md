@@ -1,6 +1,6 @@
 # SegAny sm-Jet
 
-__<p align=center>Detecte for Htt Event</p>__
+__<p align=center>Detecting Htt event</p>__
 
 <div align=center>
    <figure>
