@@ -1,4 +1,4 @@
-# SegAnySM-Jet
+# SegAny sm-Jet
 
 __<p align=center>Detecte for Htt Event</p>__
 
