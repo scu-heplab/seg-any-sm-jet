@@ -7,9 +7,7 @@ __<p align=center>Detecting Htt event</p>__
    </figure>
 </div>
 
-<p>
-   Paper: arxiv.xxxx 
-</p>
+Paper: arxiv.xxxx 
 
 ## Requirements
 * Only Linux is supported.
@@ -19,3 +17,4 @@ __<p align=center>Detecting Htt event</p>__
 
 ## Environment Configuration
 * Mamba install: https://github.com/state-spaces/mamba
+* VMamba install: https://github.com/MzeroMiko/VMamba
