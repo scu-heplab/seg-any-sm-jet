@@ -21,5 +21,8 @@ Paper: arxiv.xxxx
 
 ## Preparing Dataset
 We provide a C++ code to convert the output of Madgraph+Delphes into the format required for model training.
+```
+In the main.cpp file, set the root file to be analyzed and the PID of the particle to be assigned to the final state.
+```
 
 ___Notice___: the converted file can also be used directly for inference, but if only use the inference, a more convenient method is to convert the Delphes root file into a [H, W, 6] tensor.
