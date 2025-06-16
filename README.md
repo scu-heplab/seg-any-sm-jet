@@ -7,5 +7,5 @@ __<p align=center>Detecting Htt event</p>__
    </figure>
 </div>
 <p>
-   Paper: [PhysRevD.105.016005](https://journals.aps.org/prd/abstract/10.1103/PhysRevD.105.016005)  
+   Paper: arxiv.xxxx 
 </p>
