@@ -20,21 +20,25 @@ Paper: arxiv.xxxx
 * VMamba install: https://github.com/MzeroMiko/VMamba
 
 ## Preparing Dataset
-We provide a C++ code (in `src/cpp/`) to convert the output of Madgraph+Delphes into the format required for model training.
-* ### main.cpp
-Set the root file to be analyzed and the PID of the particle to be assigned to the final state.
+* ### Compile the C++ Tool  
+The code is in the `src/cpp` directory and includes a `Makefile` to simplify compilation.
+```bash
+cd src/cpp
+# IMPORTANT: Replace /path/to/your/delphes with your actual path!
+make DELPHES_DIR=/path/to/your/delphes
 ```
-RootExtract extract(path_to_root_file);
-vector<int>> pid_list = {25, 6, -6, 5, -5, 24, -24, 1, -1, 2, -2, 3, -3, 4, -4}; // If it is an Htt event.
-
-extract.AssignFinalState(pid_list, path_to_save_file);
+After running, a new executable file named `process` will be created in the `src/cpp` directory.
+* ### Run the Tool on a Single File  
+The `process` tool processes one file at a time. The command format is:
+```bash
+./process --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<particle_id_list>"
 ```
-After compiling and running, the program will read `path_to_root_file` and save the result to `path_to_save_file`.
-* ### transform.py
-This code (in `src/python/`) will read the `.dat` (e.g., `path_to_save_file` in the previous step) file in the specified folder and use MILP solver to perform final state assignment, and save the result `event.npy` in the specified folder.
-The `event.npy` is the training sample we need.
-
-___Notice: the converted file can also be used directly for inference, but if only use the inference, a more convenient method is to convert the Delphes root file into a [H, W, 6] tensor.___
+* ### Process Multiple Files
+We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file processing with only minor modifications.
+```bash
+chmod +x run.sh
+./run.sh
+```
 
 ## Training
 Our code supports distributed training and checkpointing.
