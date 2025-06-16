@@ -6,6 +6,16 @@ __<p align=center>Detecting Htt event</p>__
       <img src="./result/jet.png" alt="htt"/>
    </figure>
 </div>
+
 <p>
    Paper: arxiv.xxxx 
 </p>
+
+## Requirements
+* Only Linux is supported.
+* One or more high-end NVIDIA GPUs(at least 24 GB of DRAM).
+* 64-bit Python3.10(or higher, recommend 3.10) installation.
+* Pytorch2.4+cuda11.8, causal-conv1d==1.14.0, mamba-ssm==2.2.2
+
+## Environment Configuration
+* # Mamba install
