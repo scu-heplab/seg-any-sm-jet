@@ -19,3 +19,4 @@ __<p align=center>Detecting Htt event</p>__
 
 ## Environment Configuration
 * ### Mamba install
+https://github.com/state-spaces/mamba
