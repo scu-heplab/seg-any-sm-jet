@@ -20,10 +20,6 @@ Paper: arxiv.xxxx
 * VMamba install: https://github.com/MzeroMiko/VMamba
 
 ## Preparing Dataset
-<p>
-   
-   We provide a C++ code to convert the output of Madgraph+Delphes into the format required for model training.
-   
-   ___Notice:(the converted file can also be used directly for inference, but if only the inference function is used, a more convenient method is to directly convert the Delphes root file into a [H, W, 6] tensor input).___
-   
-</p>
+We provide a C++ code to convert the output of Madgraph+Delphes into the format required for model training.
+
+___Notice___: the converted file can also be used directly for inference, but if only use the inference, a more convenient method is to convert the Delphes root file into a [H, W, 6] tensor.
