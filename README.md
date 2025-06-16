@@ -33,7 +33,7 @@ The `process` tool processes one file at a time. The command format is:
 ```bash
 ./process --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<pid_list>"
 ```
-`<pid_list>` specifies the mother particles for which final state assignment will be performed.
+`<pid_list>` specifies the mother particles for which final state assignment will be performed, e.g. "25, 6, -6, 5, -5, 24, -24", light-quark/gluon will be add automatically.
 * ### Process Multiple Files
 We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file processing with only minor modifications.
 ```bash
