@@ -18,5 +18,4 @@ __<p align=center>Detecting Htt event</p>__
 * Pytorch2.4+cuda11.8, causal-conv1d==1.14.0, mamba-ssm==2.2.2
 
 ## Environment Configuration
-* ### Mamba install
-https://github.com/state-spaces/mamba
+* Mamba install: https://github.com/state-spaces/mamba
