@@ -28,6 +28,7 @@ cd src/cpp
 make DELPHES_DIR=/path/to/your/delphes
 ```
 After running, a new executable file named `process` will be created in the `src/cpp` directory.
+
 * ### Run the Tool on a Single File  
 The `process` tool processes one file at a time. The command format is:
 ```bash
@@ -40,6 +41,7 @@ We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file pr
 chmod +x run.sh
 ./run.sh
 ```
+We placed two root files for testing in the `src/cpp/input` folder, they are `htt.root` and `tttt.root`.
 
 ## Training
 Our code supports distributed training and checkpointing.
