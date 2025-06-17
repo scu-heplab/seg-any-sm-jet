@@ -30,9 +30,9 @@ make DELPHES=/path/to/your/delphes
 After running, a new executable file named `process` will be created in the `src/cpp`.
 
 * ### Run the Tool on a Single File  
-The `process` tool processes one file at a time. The command format is:
+The `sajm` tool processes one file at a time. The command format is:
 ```bash
-./process --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<pid_list>"
+./sajm --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<pid_list>"
 ```
 `<pid_list>` specifies the mother particles for which final state assignment will be performed, e.g. "25, 6, -6, 5, -5, 24, -24", light-quark/gluon will be add automatically.
 * ### Process Multiple Files
