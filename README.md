@@ -21,13 +21,13 @@ Paper: arxiv.xxxx
 
 ## Preparing Dataset
 * ### Compile the C++ Tool  
-The code is in the `src/cpp` directory and includes a `Makefile` to simplify compilation.
+The code is in the `src/cpp` and includes a `Makefile` to simplify compilation.
 ```bash
 cd src/cpp
 # IMPORTANT: Replace /path/to/your/delphes with your actual path!
 make DELPHES=/path/to/your/delphes
 ```
-After running, a new executable file named `process` will be created in the `src/cpp` directory.
+After running, a new executable file named `process` will be created in the `src/cpp`.
 
 * ### Run the Tool on a Single File  
 The `process` tool processes one file at a time. The command format is:
