@@ -41,7 +41,7 @@ We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file pr
 chmod +x run.sh
 ./run.sh
 ```
-There are two root files for testing in the `src/cpp/input` folder, namely `htt.root` and `tttt.root`.
+There are two root files for testing in the `src/cpp/input`, namely `htt.root` and `tttt.root`.
 
 ## Training
 Our code supports distributed training and checkpointing.
