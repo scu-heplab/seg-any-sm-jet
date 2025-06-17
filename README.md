@@ -25,7 +25,7 @@ The code is in the `src/cpp` directory and includes a `Makefile` to simplify com
 ```bash
 cd src/cpp
 # IMPORTANT: Replace /path/to/your/delphes with your actual path!
-make DELPHES_DIR=/path/to/your/delphes
+make DELPHES=/path/to/your/delphes
 ```
 After running, a new executable file named `process` will be created in the `src/cpp` directory.
 
