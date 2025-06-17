@@ -27,7 +27,7 @@ cd src/cpp
 # IMPORTANT: Replace /path/to/your/delphes with your actual path!
 make DELPHES=/path/to/your/delphes
 ```
-After running, a new executable file named `process` will be created in the `src/cpp`.
+After running, a new executable file named `sajm` will be created in the `src/cpp`.
 
 * ### Run the Tool on a Single File  
 The `sajm` tool processes one file at a time. The command format is:
