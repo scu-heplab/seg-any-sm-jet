@@ -5,20 +5,20 @@ TARGET = sajm
 SRCS = main.cpp extract.cpp
 OBJS = $(SRCS:.cpp=.o)
 
-DELPHES_DIR ?=
-ifeq ($(DELPHES_DIR),)
-    $(error DELPHES_DIR is not set. Please set it via environment variable or command line.)
+DELPHES ?=
+ifeq ($(DELPHES),)
+    $(error DELPHES is not set. Please set it via environment variable or command line.)
 endif
-ifneq ("$(wildcard $(DELPHES_DIR)/libDelphes.so)","")
+ifneq ("$(wildcard $(DELPHES)/libDelphes.so)","")
     # All good, Delphes found.
 else
-    $(error DELPHES_DIR is set to '$(DELPHES_DIR)', but libDelphes.so was not found there. Please check the path.)
+    $(error DELPHES is set to '$(DELPHES)', but libDelphes.so was not found there. Please check the path.)
 endif
 
 ROOT_CFLAGS = $(shell root-config --cflags)
 ROOT_LIBS = $(shell root-config --libs)
-DELPHES_CFLAGS = -I$(DELPHES_DIR) -I$(DELPHES_DIR)/external
-DELPHES_LDFLAGS = -L$(DELPHES_DIR)
+DELPHES_CFLAGS = -I$(DELPHES) -I$(DELPHES)/external
+DELPHES_LDFLAGS = -L$(DELPHES)
 DELPHES_LIBS = -lDelphes
 
 CXXFLAGS = $(CXXFLAGS_BASE) $(ROOT_CFLAGS) $(DELPHES_CFLAGS)
