@@ -3,7 +3,7 @@ import pulp
 import torch
 import numpy as np
 import torch.utils.data
-
+import torch.multiprocessing
 from generate_mask import calc_distance
 
 
@@ -109,37 +109,46 @@ class DatasetLoader(torch.utils.data.Dataset):
         return self._n_signal
 
 
-def trans():
-    dataset = torch.utils.data.DataLoader(DatasetLoader("valid"), 1, False, num_workers=16)
-    
+def trans(dir_name):
     result = []
+    dataset = torch.utils.data.DataLoader(DatasetLoader(dir_name), 1, False, num_workers=16)
     for i, data in enumerate(dataset):
         if (i + 1) > 0:
             if torch.any(data):
                 result.append(data[0].numpy())
-                if (i + 1) % 2000 == 0:
+                if (i + 1) % 1000 == 0:
                     result = np.concatenate(result, 0)
-                    np.save("event_%d.npy" % ((i + 1) // 2000), result)
+                    np.save(f"./{dir_name}/event_%d.npy" % ((i + 1) // 1000), result)
                     result = []
-        print("\r%d/10000" % (i + 1), end="")
+        print("\r%d/%d" % (i + 1, len(dataset)), end="")
     if len(result) > 0:
         result = np.concatenate(result, 0)
-        np.save("event_%d.npy" % ((i + 1) // 2000), result)
+        np.save(f"./{dir_name}/event_%d.npy" % ((i + 1) // 1000), result)
+    print(f"\n{dir_name}: Transform done.")
 
 
-def merge():
-    result = [np.load("valid/event_%d.npy" % (i + 1)) for i in range(5)]
-    # for i in range(10):
-    #     if i != 3:
-    #         result.append(np.load("event_%d.npy" % (i + 1)))
+def merge(dir_name, nums):
+    result = [np.load(f"./{dir_name}/event_{i + 1}.npy") for i in range(nums)]
     result = np.concatenate(result, 0)
-    np.save("valid/event.npy", np.array(result, np.float32))
+    np.save(f"./{dir_name}/event.npy", np.array(result, np.float32))
+    print(f"{dir_name}: Merge done.")
 
 
 def main():
-    # trans()
-    merge()
+    trans("hp_h1wp_500")
+    trans("hp_h1wp_1000")
+    trans("hp_h1wp_1500")
+    trans("hp_h1wp_500_wo_pt")
+    trans("hp_h1wp_1000_wo_pt")
+    trans("hp_h1wp_1500_wo_pt")
+    merge("hp_h1wp_500", 10)
+    merge("hp_h1wp_1000", 10)
+    merge("hp_h1wp_1500", 10)
+    merge("hp_h1wp_500_wo_pt", 10)
+    merge("hp_h1wp_1000_wo_pt", 10)
+    merge("hp_h1wp_1500_wo_pt", 10)
 
 
 if __name__ == '__main__':
+    torch.multiprocessing.set_sharing_strategy('file_system')
     main()
