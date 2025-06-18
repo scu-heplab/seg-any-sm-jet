@@ -7,8 +7,8 @@ event_pids["tttt"]="6,-6,24,-24,5,-5"
 # ... Add more event types here ...
 
 # Basic Path
-INPUT_DIR="path_to_your_root_dir" # "./input"
-OUTPUT_DIR="path_to_your_output_dir" # "./output"
+INPUT_DIR="./input"
+OUTPUT_DIR="./output"
 
 mkdir -p "$OUTPUT_DIR"
 
