@@ -93,3 +93,5 @@ torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 2 --nn
 # machine 2:
 torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 4 --nnodes 2 --node_rank 1 train.py
 ```
+
+## Validate/Inference
