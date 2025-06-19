@@ -103,4 +103,4 @@ python validate.py --test-dir ./test --output-path ./test/test.pkl --batch-size 
 After the test is completed, you can use `plot.py` to visualize the relevant test results.
 
 ## Inference
-We have not developed a dedicated script for inference. However, a Jupyter Notebook is provided that demonstrates the process and can be used as a reference.
+We have not developed a dedicated script for inference. However, a Jupyter Notebook (`analysis.ipynb`) is provided that demonstrates the process and can be used as a reference.
