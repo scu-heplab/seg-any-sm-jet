@@ -100,3 +100,4 @@ We provide `validate.py` to test the performance of the model. Use the following
 ```bash
 python validate.py --test-dir ./test --output-path ./test/test.pkl --batch-size 20 --pretrain ./weight/state.pth
 ```
+After the test is completed, you can use `plot.py` to visualize the relevant test results.
