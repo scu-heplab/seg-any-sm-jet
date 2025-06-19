@@ -35,6 +35,7 @@ The `sajm` tool processes one file at a time. The command format is:
 ./sajm --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<pid_list>"
 ```
 `<pid_list>` specifies the mother particles for which final state assignment will be performed, e.g. "25, 6, -6, 5, -5, 24, -24", light-quark/gluon will be add automatically.
+
 * ### Process Multiple Files
 We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file processing with only minor modifications.
 ```bash
@@ -42,6 +43,9 @@ chmod +x run.sh
 ./run.sh
 ```
 There are two root files for testing in the `src/cpp/input`, namely `htt.root` and `tttt.root`.
+
+* ### Assign
+Switch to `./src/python` and execute the final state particle assignment algorithm according to the following command. The script will also perform the conversion from `.dat` to `.npy`.
 
 ## Training
 Our code supports distributed training and checkpointing.
