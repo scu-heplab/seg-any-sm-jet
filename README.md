@@ -78,4 +78,7 @@ python transform.py merge --input-dir ./temp --output-dir ./dataset
 ```
 
 ## Training
-Our code supports distributed training and checkpointing.
+Our code supports distributed training and checkpointing. Use the following command to start training the model:
+```bash
+torchrun --master_addr 127.0.0.1 --master_port 12547 --nproc_per_node 2 --nnodes 1 --node_rank 0 train.py
+```
