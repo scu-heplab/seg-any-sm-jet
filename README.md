@@ -20,7 +20,7 @@ Paper: arxiv.xxxx
 * VMamba install: https://github.com/MzeroMiko/VMamba
 
 ## Preparing Dataset
-* ### Compile the C++ Tool  
+* ### Step 1: Compile the C++ Tool  
 The code is in the `src/cpp` and includes a `Makefile` to simplify compilation.
 ```bash
 cd src/cpp
@@ -29,14 +29,14 @@ make DELPHES=/path/to/your/delphes
 ```
 After running, a new executable file named `sajm` will be created in the `src/cpp`.
 
-* ### Run the Tool on a Single File  
+* ### Step 2: Run the Tool on a Single File  
 The `sajm` tool processes one file at a time. The command format is:
 ```bash
 ./sajm --input <path_to_your_input.root> --output <path_for_your_output.dat> --pids "<pid_list>"
 ```
 `<pid_list>` specifies the mother particles for which final state assignment will be performed, e.g. "25, 6, -6, 5, -5, 24, -24", light-quark/gluon will be add automatically.
 
-* ### Process Multiple Files
+* ### (Option) Process Multiple Files
 We provide a shell script (`run.sh`) in `src/cpp` that can perform multi-file processing with only minor modifications.
 ```bash
 chmod +x run.sh
@@ -44,8 +44,23 @@ chmod +x run.sh
 ```
 There are two root files for testing in the `src/cpp/input`, namely `htt.root` and `tttt.root`.
 
-* ### Assign
-Switch to `./src/python` and execute the final state particle assignment algorithm according to the following command. The script will also perform the conversion from `.dat` to `.npy`.
+* ### Step 3: Assign
+Switch to `./src/python`, use the `transform.py` script to perform final state particle assignment. It converts the `.dat` files from the C++ tool into the final `event.npy` format required for training.
+The script operates on a per-directory basis and has two commands: `transform` and `merge`.
+```bash
+python src/python/transform.py transform --input-dir <your_data_directory> [options]
+```
+Example:
+```bash
+# Process data in 'data' and save chunks in the same directory
+python transform.py transform --input-dir ./data
+
+# Specify a separate output directory
+python transform.py transform --input-dir ./data --output-dir ./temp
+
+# Use the solver with more workers
+python transform.py transform --input-dir ./data --workers 32
+```
 
 ## Training
 Our code supports distributed training and checkpointing.
