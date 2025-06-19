@@ -80,5 +80,16 @@ python transform.py merge --input-dir ./temp --output-dir ./dataset
 ## Training
 Our code supports distributed training and checkpointing. Use the following command to start training the model:
 ```bash
-torchrun --master_addr 127.0.0.1 --master_port 12547 --nproc_per_node 1 --nnodes 1 --node_rank 0 train.py
+torchrun --master_addr <rank_0_ip_address> --master_port <port> --nproc_per_node <gpu_num_on_this_machine> --nnodes <machine_num> --node_rank <rank> train.py
+```
+Example:
+```bash
+# [1] machine, [4] GPUs, local training.
+torchrun --master_addr 127.0.0.1 --master_port 12547 --nproc_per_node 4 --nnodes 1 --node_rank 0 train.py
+
+# [2] machines, [2, 4] GPUs, distributed training.
+# machine 1:
+torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 2 --nnodes 2 --node_rank 0 train.py
+# machine 2:
+torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 4 --nnodes 2 --node_rank 1 train.py
 ```
