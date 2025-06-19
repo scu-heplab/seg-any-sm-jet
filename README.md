@@ -93,7 +93,8 @@ torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 2 --nn
 # machine 2:
 torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 4 --nnodes 2 --node_rank 1 train.py
 ```
-___Notice: For distributed training, edit `init()` in `train.py` and change `os.environ["NCCL_SOCKET_IFNAME"] = "lo"`. You must replace `"lo"` with the actual network interface name for each specific machine.___
+___Notice: For distributed training, edit `init()` in `train.py` and change `os.environ["NCCL_SOCKET_IFNAME"] = "lo"`. You must replace `"lo"` with the actual network interface name for each specific machine.
+The IP address must also be replaced with the IP address of the machine with `rank=0` (the master node).___
 
 ## Validate
 We provide `validate.py` to test the performance of the model. Use the following commands to test:
