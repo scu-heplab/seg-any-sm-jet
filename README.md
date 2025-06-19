@@ -46,13 +46,15 @@ There are two root files for testing in the `src/cpp/input`, namely `htt.root` a
 
 * ### Step 3: Assign
 Switch to `./src/python`, use the `transform.py` script to perform final state particle assignment. It converts the `.dat` files from the C++ tool into the final `event.npy` format required for training.
-The script operates on a per-directory basis and has two commands: `transform` and `merge`.
+The script operates on a per-directory basis and has two commands: `transform` and `merge`.  
+#### 1) `transform`: Convert `.dat` to chunked `.npy` files
+This command processes all `.dat` files within a specified directory and saves the results into smaller `.npy` chunks.
 ```bash
-python src/python/transform.py transform --input-dir <your_data_directory> [options]
+python transform.py transform --input-dir <your_data_directory> [options]
 ```
 Example:
 ```bash
-# Process data in 'data' and save chunks in the same directory
+# Process data in './data' and save chunks in the same directory
 python transform.py transform --input-dir ./data
 
 # Specify a separate output directory
@@ -60,6 +62,19 @@ python transform.py transform --input-dir ./data --output-dir ./temp
 
 # Use the solver with more workers
 python transform.py transform --input-dir ./data --workers 32
+```
+#### 2) `merge`: Combine chunks into a single `event.npy`
+After transformation, this command merges all the generated chunks into a single file.
+```bash
+python transform.py merge --input-dir <your_data_directory> [options]
+```
+Example:
+```bash
+# Merge chunks in './data' into './data/event.npy'
+python transform.py merge --input-dir ./data
+
+# Merge chunks from a temp directory to a final destination file
+python transform.py merge --input-dir ./temp --output-dir ./dataset
 ```
 
 ## Training
