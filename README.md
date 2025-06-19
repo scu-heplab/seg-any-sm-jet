@@ -96,3 +96,7 @@ torchrun --master_addr 192.168.1.100 --master_port 12547 --nproc_per_node 4 --nn
 ___Notice: For distributed training, edit `init()` in `train.py` and change `os.environ["NCCL_SOCKET_IFNAME"] = "lo"`. You must replace `"lo"` with the actual network interface name for each specific machine.___
 
 ## Validate/Inference
+We provide `validate.py` to test the performance of the model. Use the following commands to test:
+```bash
+python validate.py --test-dir ./test --output-path ./test/test.pkl --batch-size 20 --pretrain ./weight/state.pth
+```
