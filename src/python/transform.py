@@ -35,7 +35,7 @@ class DatasetLoader(torch.utils.data.Dataset):
         self._signal_end = np.cumsum(signal_counts)
         self._signal_start = self._signal_end - signal_counts
 
-        self._solver = pulp.PULP_CBC_CMD(threads=threads, msg=False)
+        self._solver = pulp.CPLEX(threads=threads, msg=False)
 
     def __getitem__(self, index):
         events, particle_label, particle_momentum = self._assigned(self._signal[self._signal_start[index]:self._signal_end[index], 1:])
