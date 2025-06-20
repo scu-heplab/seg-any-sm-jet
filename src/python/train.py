@@ -147,4 +147,4 @@ def train(batch_size=16, epochs=10, pretrain: str = None):
 
 if __name__ == '__main__':
     init()
-    train(20, 400, "weights/state.pth")
+    train(20, 120, "weights/state.pth")

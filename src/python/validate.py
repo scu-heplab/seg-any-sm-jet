@@ -1,6 +1,7 @@
 import os
 import torch
 import pickle
+import argparse
 import numpy as np
 import torch.utils.data
 from collections import namedtuple
@@ -25,7 +26,7 @@ def prediction_process(predicts, targets, conf_threshold=0.3):
     mask_iou = calc_mask_jaccard_metric(predict_mask[:, :, None], target_mask[:, None], True)
     mask_iou = torch.where(torch.as_tensor(torch.unsqueeze(target_class, 1) != 0), mask_iou, -torch.inf)
 
-    iou = mask_iou # (kin_iou + mask_iou) / 2
+    iou = mask_iou  # (kin_iou + mask_iou) / 2
 
     iou_ignore = torch.where(iou.amax(-1) >= 0.5, 1.0, 0.0)
     conf_ignore = torch.where(predict_conf > conf_threshold, 1.0, 0.0)
@@ -70,7 +71,7 @@ def prediction_process(predicts, targets, conf_threshold=0.3):
 
 
 @torch.no_grad()
-def valid(test_dir, batch_size=10, pretrain: str = None):
+def valid(test_dir, output_path, batch_size=10, pretrain: str = None):
     lhc = LhcSAM(315, 5).cuda().eval()
 
     if pretrain is not None and os.path.exists(pretrain):
@@ -168,10 +169,32 @@ def valid(test_dir, batch_size=10, pretrain: str = None):
         if i + 1 != len(dataset):
             print("\033[F" * 3, end="")
 
+    print(f"\nSaving prediction results to: {output_path}")
     predict = {'kin': kin_records, 'ROC': roc_records, 'mAP': [map_records, mis_records]}
-    with open(f"result_{test_dir}.pkl", "wb") as file:
+    with open(output_path, "wb") as file:
         pickle.dump(predict, file)
+    print("Done.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run validation and inference on the LhcSAM model.")
+
+    parser.add_argument('--test-dir', type=str, required=True,
+                        help='Path to the directory containing the test dataset.')
+
+    parser.add_argument('--output-path', type=str, required=True,
+                        help='Path to save the validation results pkl file.')
+
+    parser.add_argument('--batch-size', type=int, default=20,
+                        help='Batch size for validation (default: 20).')
+
+    parser.add_argument('--pretrain', type=str, default=None,
+                        help='Path to the pretrained model weights file (.pth). If not provided, the model starts from scratch.')
+
+    args = parser.parse_args()
+
+    valid(test_dir=args.test_dir, output_path=args.output_path, batch_size=args.batch_size, pretrain=args.pretrained_weights)
 
 
 if __name__ == '__main__':
-    valid("test", 20, './weight/state.pth')
+    main()

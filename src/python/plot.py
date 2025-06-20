@@ -325,7 +325,6 @@ def main():
     # plot_roc(predict["ROC"], 2, "H", [1, 3, 4, 5], ["t", "W/Z", "b", "j"], 0.00001)
     # plot_roc(predict["ROC"], 4, "b", [1, 2, 3, 5], ["t", "H", "W/Z", "j"], 0.00001)
     # plot_roc(predict["ROC"], 3, "W/Z", [1, 2, 4, 5], ["t", "H", "b", "j"], 0.00001)
-    # print(predict)
 
 
 if __name__ == "__main__":

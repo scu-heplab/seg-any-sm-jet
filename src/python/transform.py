@@ -1,26 +1,32 @@
 import os
+import glob
 import pulp
 import torch
+import argparse
 import numpy as np
 import torch.utils.data
 import torch.multiprocessing
+from tqdm import tqdm
 from generate_mask import calc_distance
 
 
 class DatasetLoader(torch.utils.data.Dataset):
-    def __init__(self, dir_path, include=".dat"):
+    def __init__(self, dir_path, threads, memory):
         super(DatasetLoader, self).__init__()
 
         n = 0
         self._signal = []
-        for path in [os.path.join(dir_path, path) for path in os.listdir(dir_path)]:
-            if include in path:
-                data = np.loadtxt(path)
-                data[:, 0] = data[:, 0] + n
-                n += len(np.unique(data[:, 0]))
-                self._signal.append(data)
+        paths = sorted([os.path.join(dir_path, f) for f in os.listdir(dir_path) if f.endswith(".dat")])
+        if not paths:
+            raise FileNotFoundError(f"No '.dat' files found in the directory: {dir_path}")
+        print(f"Found {len(paths)} '.dat' files to process in '{dir_path}'.")
+        for path in paths:
+            data = np.loadtxt(path)
+            data[:, 0] = data[:, 0] + n
+            n += len(np.unique(data[:, 0]))
+            self._signal.append(data)
         self._signal = np.concatenate(self._signal, 0)
-        np.save(os.path.join(dir_path, "signal.npy"), self._signal)
+        # np.save(os.path.join(dir_path, "signal.npy"), self._signal)
 
         # self._signal = np.load(os.path.join(dir_path, "signal.npy"))
         _, signal_counts = np.unique(self._signal[:, 0], return_counts=True)
@@ -29,27 +35,23 @@ class DatasetLoader(torch.utils.data.Dataset):
         self._signal_end = np.cumsum(signal_counts)
         self._signal_start = self._signal_end - signal_counts
 
-        self._solver = pulp.CPLEX(threads=16, msg=False, maxMemory=20480)
+        self._solver = pulp.CPLEX(threads=threads, msg=False, maxMemory=memory)
 
-    def __getitem__(self, item):
-        index = item
-        if index >= 0:
-            events, particle_label, particle_momentum = self._assigned(self._signal[self._signal_start[index]:self._signal_end[index], 1:])
+    def __getitem__(self, index):
+        events, particle_label, particle_momentum = self._assigned(self._signal[self._signal_start[index]:self._signal_end[index], 1:])
 
-            if len(particle_label) > 0:
-                particle_label = np.concatenate([np.concatenate([-(np.zeros((pl.shape[0], 1)) + i + 1), pl], -1) for i, pl in enumerate(particle_label)], 0)
-                particle_momentum = np.concatenate([np.concatenate([np.zeros((pm.shape[0], 1)) + i + 1, pm], -1) for i, pm in enumerate(particle_momentum)], 0)
-                
-                events = np.concatenate([events[:, :1] + index, np.zeros((events.shape[0], 2)), events[:, 1:]], -1)
-                particle_label = np.concatenate([np.zeros((particle_label.shape[0], 1)) + index, particle_label], -1)
-                particle_momentum = np.concatenate([np.zeros((particle_momentum.shape[0], 1)) + index, particle_momentum], -1)
-                events = np.concatenate([particle_label, particle_momentum, events])
-                
-                return np.array(events, np.float32)
-            else:
-                return 0
+        if len(particle_label) > 0:
+            particle_label = np.concatenate([np.concatenate([-(np.zeros((pl.shape[0], 1)) + i + 1), pl], -1) for i, pl in enumerate(particle_label)], 0)
+            particle_momentum = np.concatenate([np.concatenate([np.zeros((pm.shape[0], 1)) + i + 1, pm], -1) for i, pm in enumerate(particle_momentum)], 0)
+
+            events = np.concatenate([events[:, :1] + index, np.zeros((events.shape[0], 2)), events[:, 1:]], -1)
+            particle_label = np.concatenate([np.zeros((particle_label.shape[0], 1)) + index, particle_label], -1)
+            particle_momentum = np.concatenate([np.zeros((particle_momentum.shape[0], 1)) + index, particle_momentum], -1)
+            events = np.concatenate([particle_label, particle_momentum, events])
+
+            return np.array(events, np.float32)
         else:
-            return 0
+            return None
 
     def _assigned(self, events):
         all_candidate = np.unique(np.abs(events[events[:, 0] < 0, 0]))
@@ -109,46 +111,125 @@ class DatasetLoader(torch.utils.data.Dataset):
         return self._n_signal
 
 
-def trans(dir_name):
-    result = []
-    dataset = torch.utils.data.DataLoader(DatasetLoader(dir_name), 1, False, num_workers=16)
-    for i, data in enumerate(dataset):
-        if (i + 1) > 0:
-            if torch.any(data):
-                result.append(data[0].numpy())
-                if (i + 1) % 1000 == 0:
-                    result = np.concatenate(result, 0)
-                    np.save(f"./{dir_name}/event_%d.npy" % ((i + 1) // 1000), result)
-                    result = []
-        print("\r%d/%d" % (i + 1, len(dataset)), end="")
-    if len(result) > 0:
-        result = np.concatenate(result, 0)
-        np.save(f"./{dir_name}/event_%d.npy" % ((i + 1) // 1000), result)
-    print(f"\n{dir_name}: Transform done.")
+def collate_fn(batch):
+    batch = [b for b in batch if b is not None]
+    if len(batch) == 0:
+        return None
+    else:
+        return batch[0]
 
 
-def merge(dir_name, nums):
-    result = [np.load(f"./{dir_name}/event_{i + 1}.npy") for i in range(nums)]
-    result = np.concatenate(result, 0)
-    np.save(f"./{dir_name}/event.npy", np.array(result, np.float32))
-    print(f"{dir_name}: Merge done.")
+def run_transform(args):
+    input_dir = args.input_dir
+    output_dir = args.output_dir if args.output_dir else input_dir  # Default output to input dir
+    os.makedirs(output_dir, exist_ok=True)
+
+    print(f"--- Starting Transform for directory: {input_dir} ---")
+
+    dataset = DatasetLoader(dir_path=input_dir, threads=args.threads, memory=args.memory)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, collate_fn=collate_fn)
+
+    chunk_index = 1
+    result_chunk = []
+    for i, data in enumerate(tqdm(dataloader, desc=f"Processing {os.path.basename(input_dir)}")):
+        if data is not None:
+            result_chunk.append(data)
+
+        if len(result_chunk) % args.chunk_size == 0 or (i + 1) == len(dataloader):
+            output_path = os.path.join(output_dir, f"{args.prefix}_{chunk_index}.npy")
+            chunk_data = np.concatenate(result_chunk, 0)
+            np.save(output_path, chunk_data)
+            result_chunk = []
+            chunk_index += 1
+
+    print(f"--- Transform finished for {input_dir} ---")
+
+
+def run_merge(args):
+    input_dir = args.input_dir
+    output_file = os.path.join(args.output_dir, "event.npy") if args.output_dir else os.path.join(input_dir, "event.npy")
+    output_dir = os.path.dirname(output_file)
+    if output_dir:
+        os.makedirs(output_dir, exist_ok=True)
+
+    print(f"--- Starting Merge for directory: {input_dir} ---")
+
+    chunk_files = sorted(glob.glob(os.path.join(input_dir, f"{args.prefix}_*.npy")))
+
+    if not chunk_files:
+        print(f"Error: No files found in '{input_dir}' with prefix '{args.prefix}_'. Nothing to merge.")
+        return
+
+    print(f"Found {len(chunk_files)} chunk files to merge.")
+
+    all_data = [np.load(f) for f in tqdm(chunk_files, desc="Merging files")]
+
+    final_data = np.concatenate(all_data, 0)
+
+    print(f"Saving final merged file to: {output_file} ({final_data.shape[0]} events)")
+    np.save(output_file, final_data.astype(np.float32))
+    print(f"--- Merge finished for {input_dir} ---")
 
 
 def main():
-    trans("hp_h1wp_500")
-    trans("hp_h1wp_1000")
-    trans("hp_h1wp_1500")
-    trans("hp_h1wp_500_wo_pt")
-    trans("hp_h1wp_1000_wo_pt")
-    trans("hp_h1wp_1500_wo_pt")
-    merge("hp_h1wp_500", 10)
-    merge("hp_h1wp_1000", 10)
-    merge("hp_h1wp_1500", 10)
-    merge("hp_h1wp_500_wo_pt", 10)
-    merge("hp_h1wp_1000_wo_pt", 10)
-    merge("hp_h1wp_1500_wo_pt", 10)
+    parser = argparse.ArgumentParser(description="Process '.dat' data generated by sajm. Use 'transform' then 'merge'.")
+    subparsers = parser.add_subparsers(dest='command', help='Available commands', required=True)
+
+    # --- Parent Parser for shared arguments ---
+    parent_parser = argparse.ArgumentParser(add_help=False)
+    parent_parser.add_argument(
+        '-i', '--input-dir', type=str, required=True,
+        help="Directory to process."
+    )
+    parent_parser.add_argument(
+        '--prefix', type=str, default='event_chunk',
+        help="Prefix for intermediate chunk files (default: event_chunk)."
+    )
+
+    # --- Transform Command ---
+    parser_transform = subparsers.add_parser(
+        'transform', parents=[parent_parser],
+        help='Convert .dat files into chunked .npy files.'
+    )
+    parser_transform.add_argument(
+        '-o', '--output-dir', type=str, default=None,
+        help="Directory to save output chunks. Defaults to the input directory."
+    )
+    parser_transform.add_argument(
+        '--chunk-size', type=int, default=1000,
+        help="Number of events per chunk file (default: 1000)."
+    )
+    parser_transform.add_argument(
+        '--workers', type=int, default=16,
+        help="Number of DataLoader workers (default: 16)."
+    )
+    parser_transform.add_argument(
+        '--threads', type=int, default=16,
+        help="Number of threads for the MILP solver (default: 16)."
+    )
+    parser_transform.add_argument(
+        '--memory', type=int, default=20480,
+        help="Max memory in MB for the solver (default: 20480)."
+    )
+    parser_transform.set_defaults(func=run_transform)
+
+    # --- Merge Command ---
+    parser_merge = subparsers.add_parser(
+        'merge', parents=[parent_parser],
+        help='Merge chunked .npy files into a single file.'
+    )
+    parser_merge.add_argument(
+        '-o', '--output-dir', type=str, default=None,
+        help="Full path for the final merged .npy file. Defaults to 'event.npy' inside the input directory."
+    )
+    parser_merge.set_defaults(func=run_merge)
+
+    args = parser.parse_args()
+    args.func(args)
 
 
 if __name__ == '__main__':
+    # This setting is important for preventing "too many open files" errors
+    # when using PyTorch's multiprocessing with a large number of workers.
     torch.multiprocessing.set_sharing_strategy('file_system')
     main()
