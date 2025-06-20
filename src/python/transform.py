@@ -35,7 +35,7 @@ class DatasetLoader(torch.utils.data.Dataset):
         self._signal_end = np.cumsum(signal_counts)
         self._signal_start = self._signal_end - signal_counts
 
-        self._solver = pulp.CPLEX(threads=threads, msg=False, maxMemory=memory)
+        self._solver = pulp.PULP_CBC_CMD(threads=threads, msg=False)
 
     def __getitem__(self, index):
         events, particle_label, particle_momentum = self._assigned(self._signal[self._signal_start[index]:self._signal_end[index], 1:])
@@ -166,7 +166,7 @@ def run_merge(args):
 
     final_data = np.concatenate(all_data, 0)
 
-    print(f"Saving final merged file to: {output_file} ({final_data.shape[0]} events)")
+    print(f"Saving final merged file to: {output_file} ({np.unique(final_data[:, 0]).shape[0]} events)")
     np.save(output_file, final_data.astype(np.float32))
     print(f"--- Merge finished for {input_dir} ---")
 
@@ -206,10 +206,6 @@ def main():
     parser_transform.add_argument(
         '--threads', type=int, default=16,
         help="Number of threads for the MILP solver (default: 16)."
-    )
-    parser_transform.add_argument(
-        '--memory', type=int, default=20480,
-        help="Max memory in MB for the solver (default: 20480)."
     )
     parser_transform.set_defaults(func=run_transform)
 
