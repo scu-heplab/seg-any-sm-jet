@@ -11,7 +11,7 @@ from generate_mask import calc_distance
 
 
 class DatasetLoader(torch.utils.data.Dataset):
-    def __init__(self, dir_path, threads, memory):
+    def __init__(self, dir_path, threads):
         super(DatasetLoader, self).__init__()
 
         n = 0
@@ -126,7 +126,7 @@ def run_transform(args):
 
     print(f"--- Starting Transform for directory: {input_dir} ---")
 
-    dataset = DatasetLoader(dir_path=input_dir, threads=args.threads, memory=args.memory)
+    dataset = DatasetLoader(dir_path=input_dir, threads=args.threads)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False, num_workers=args.workers, collate_fn=collate_fn)
 
     chunk_index = 1
