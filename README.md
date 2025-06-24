@@ -7,7 +7,7 @@ __<p align=center>Detecting Htt event</p>__
    </figure>
 </div>
 
-Paper: arxiv.xxxx 
+Paper: [arXiv:2506.18336](https://arxiv.org/abs/2506.18336)  
 
 ## Requirements
 * Only Linux is supported.
