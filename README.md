@@ -105,3 +105,16 @@ After the test is completed, you can use `plot.py` to visualize the relevant tes
 
 ## Inference
 We have not developed a dedicated script for inference. However, a Jupyter Notebook (`analysis.ipynb`) is provided that demonstrates the process and can be used as a reference.
+
+## Citation
+```
+@misc{li2025jetreconstructionmambanetworks,
+      title={Jet Reconstruction with Mamba Networks in Collider Events}, 
+      author={Jinmian Li and Peng Li and Bingwei Long and Rao Zhang},
+      year={2025},
+      eprint={2506.18336},
+      archivePrefix={arXiv},
+      primaryClass={hep-ph},
+      url={https://arxiv.org/abs/2506.18336}, 
+}
+```
