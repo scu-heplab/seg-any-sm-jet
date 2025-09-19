@@ -7,9 +7,9 @@ __<p align=center>Detecting Htt event</p>__
    </figure>
 </div>
 
-# Paper
-[Phys.Rev.D 112, 056017](https://journals.aps.org/prd/abstract/10.1103/pwp8-ffqk) 
-[arXiv:2506.18336](https://arxiv.org/abs/2506.18336)  
+Paper:
+* [arXiv:2506.18336](https://arxiv.org/abs/2506.18336)
+* [Phys.Rev.D 112, 056017](https://journals.aps.org/prd/abstract/10.1103/pwp8-ffqk)
 
 ## Requirements
 * Only Linux is supported.
