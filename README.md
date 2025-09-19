@@ -111,13 +111,18 @@ We have not developed a dedicated script for inference. However, a Jupyter Noteb
 
 ## Citation
 ```
-@misc{li2025jetreconstructionmambanetworks,
-      title={Jet Reconstruction with Mamba Networks in Collider Events}, 
-      author={Jinmian Li and Peng Li and Bingwei Long and Rao Zhang},
-      year={2025},
-      eprint={2506.18336},
-      archivePrefix={arXiv},
-      primaryClass={hep-ph},
-      url={https://arxiv.org/abs/2506.18336}, 
+@article{pwp8-ffqk,
+  title = {Jet reconstruction with Mamba networks in collider events},
+  author = {Li, Jinmian and Li, Peng and Long, Bingwei and Zhang, Rao},
+  journal = {Phys. Rev. D},
+  volume = {112},
+  issue = {5},
+  pages = {056017},
+  numpages = {14},
+  year = {2025},
+  month = {Sep},
+  publisher = {American Physical Society},
+  doi = {10.1103/pwp8-ffqk},
+  url = {https://link.aps.org/doi/10.1103/pwp8-ffqk}
 }
 ```
