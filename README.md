@@ -15,7 +15,7 @@ Paper:
 * Only Linux is supported.
 * 64-bit Python3.10(or higher, recommend 3.10) installation.
 * One or more high-end NVIDIA GPUs(at least 24 GB of VRAM).
-* Pytorch2.4+cuda11.8, causal-conv1d==1.14.0, mamba-ssm==2.2.2, pulp==3.1.1.
+* Pytorch2.4+cuda11.8, causal-conv1d==1.4.0, mamba-ssm==2.2.2, pulp==3.1.1.
 
 ## Environment Configuration
 * Mamba install: https://github.com/state-spaces/mamba
